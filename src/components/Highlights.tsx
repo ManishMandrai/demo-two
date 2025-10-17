@@ -1,10 +1,10 @@
 // src/components/Highlights.tsx
 import React from "react";
-import { motion, Variants } from "framer-motion";
 
 /**
- * Highlights — Cinematic gold-edged cards with smooth entrance animation.
+ * Highlights — Cinematic gold-edged cards with CSS-based hover effects.
  * Layout: mobile (1), tablet (2), desktop (3).
+ * No Framer Motion — uses Tailwind transitions only for speed & simplicity.
  */
 
 const items = [
@@ -24,18 +24,9 @@ const items = [
     title: "Awards",
     subtitle: "Celebrating Excellence",
     desc: "Honouring bold storytelling across documentaries, shorts, and features.",
-    img: "https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?auto=format&fit=crop&w=1400&q=80",
+    img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=1400&q=80",
   },
 ];
-
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring" as const, stiffness: 100, damping: 15 },
-  },
-};
 
 const Highlights: React.FC = () => {
   return (
@@ -48,61 +39,55 @@ const Highlights: React.FC = () => {
           Moments that define the night — premieres, conversations, and awards that illuminate bold cinema.
         </p>
 
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {items.map((it, idx) => (
-            <motion.article
+            <article
               key={it.title}
-              variants={cardVariants}
-              whileHover={{ scale: 1.04, transition: { duration: 0.4 } }}
-              className="relative group overflow-hidden rounded-2xl bg-black border border-yellow-500/20 shadow-[0_10px_30px_rgba(255,215,0,0.08)]"
+              className="relative group overflow-hidden rounded-2xl bg-black border border-yellow-500/18 shadow-[0_8px_24px_rgba(0,0,0,0.6)] transform transition-transform duration-400 hover:scale-105"
+              aria-labelledby={`highlight-${idx}-title`}
             >
-              {/* Image */}
+              {/* Image area */}
               <div className="h-64 md:h-72 w-full overflow-hidden relative">
                 <img
                   src={it.img}
                   alt={it.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                 />
-                {/* Subtle overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-                {/* Gold inner edge */}
+
+                {/* subtle dark overlay for legibility */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
+
+                {/* gold inner edge */}
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{
-                    boxShadow:
-                      "inset 0 0 0 2px rgba(212,175,55,0.25), inset 0 0 40px rgba(0,0,0,0.55)",
+                    boxShadow: "inset 0 0 0 2px rgba(212,175,55,0.22), inset 0 0 40px rgba(0,0,0,0.55)",
                   }}
                 />
               </div>
 
               {/* Card content */}
-              <div className="absolute bottom-0 left-0 right-0 p-5 text-left">
-                <h3 className="text-xl font-semibold text-yellow-400">
+              <div className="p-5 text-left">
+                <h3 id={`highlight-${idx}-title`} className="text-xl font-semibold text-yellow-400">
                   {it.title}
                 </h3>
-                <p className="text-xs uppercase tracking-widest text-gray-400 mt-1">
-                  {it.subtitle}
-                </p>
-                <p className="mt-3 text-sm text-gray-300 leading-snug">
-                  {it.desc}
-                </p>
+                <p className="text-xs uppercase tracking-widest text-gray-400 mt-1">{it.subtitle}</p>
+                <p className="mt-3 text-sm text-gray-300 leading-snug">{it.desc}</p>
 
                 {/* Actions */}
                 <div className="mt-5 flex items-center gap-4">
                   <a
                     href="#"
-                    className="text-sm text-yellow-300 font-medium hover:underline"
+                    className="text-sm text-yellow-300 font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-yellow-400 rounded"
                   >
                     Learn more
                   </a>
+
                   <a
                     href="#tickets"
-                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400 text-black text-sm font-semibold shadow-sm hover:brightness-110 transition"
+                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400 text-black text-sm font-semibold shadow-sm hover:brightness-105 transition"
+                    aria-label={`Book ${it.title}`}
                   >
                     Book
                     <svg
@@ -113,6 +98,7 @@ const Highlights: React.FC = () => {
                       strokeWidth="1.5"
                       strokeLinecap="round"
                       strokeLinejoin="round"
+                      aria-hidden
                     >
                       <path d="M5 12h14" />
                       <path d="M13 6l6 6-6 6" />
@@ -120,9 +106,9 @@ const Highlights: React.FC = () => {
                   </a>
                 </div>
               </div>
-            </motion.article>
+            </article>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
